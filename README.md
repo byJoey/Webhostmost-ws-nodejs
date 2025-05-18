@@ -1,127 +1,133 @@
-# Webhostmost项目部署
+# Webhostmost-ws-nodejs 配置小助手 (app.ps1) 使用指南
 
-## **重要警告**~~~~**重要警告**~~~~**重要警告**
+## 哈喽！
 
-### **本项目由[eooce](https://github.com/eooce)提供，未经过作者同意擅自使用和篡改代码内容是可耻行为！**
+欢迎使用 `app.ps1` 这个 PowerShell 小脚本！如果你想在 Webhostmost 上部署 `Webhostmost-ws-nodejs` 项目，它能帮你一把，让配置过程更轻松。它会一步步引导你，自动帮你填好那些麻烦的配置文件。
 
-### **以上行为只包含Youtube视频创作收益者！**
+## 感谢这些朋友
 
+* **这个配置脚本的作者 (Script Author)**: Joey
+    * 博客 (Blog): joeyblog.net
+    * 有啥想说的，来TG聊聊 (Feedback TG): [https://t.me/+ft-zI76oovgwNmRh](https://t.me/+ft-zI76oovgwNmRh)
+* **核心功能主要来自 (Core Functionality By)**:
+    * [https://github.com/eooce](https://github.com/eooce)
+    * [https://github.com/qwer-search](https://github.com/qwer-search)
 
+## 这个脚本能做啥？
 
+简单来说，这个 PowerShell 脚本就是你的配置小能手：
 
-1. [注册Webhostmost](https://client.webhostmost.com/register.php)，邮箱认证后，点击**Buy New Hosting Plan**，选择左上角**Free Plan**，点击**Order Now**.
+1.  **轻松配置**: 它会问你几个简单的问题，比如你的域名、想要的 UUID 和端口号，还有（如果你需要的话）Nezha 监控的那些设置。
+2.  **自动下载**: 它会帮你从 GitHub 上把最新的 `app.js` 和 `package.json` 文件下载到你的电脑上。
+3.  **智能修改**: 根据你给的信息，它会自动修改 `app.js` 文件里的默认设置。
+4.  **清晰总结**: 最后，它会把所有配置信息，包括 VLESS 订阅链接和文件要上传到哪里，都清楚地告诉你。
 
-![](https://images.2024921.xyz/images/202502081754083.png)
+## 开始之前，你需要…
 
-![](https://images.2024921.xyz/images/202502081755841.png)
+* 一台 Windows 电脑。
+* PowerShell（一般 Windows 都自带了，不用担心）。
+* 网络要能连得上，这样才能下载配置文件。
 
-2. 跳转到域名选项，选择第三个**Use Subdomain**（选择官方提供的免费域名.freewebhostmost.com），输入自己的域名前缀，例如：**hezi**.freewebhostmost.com ，点击Check创建自己的项目访问链接。
+## 怎么用呢？
 
-**重要通知**、**重要通知**、**重要通知**，官方不再提供的原域名了，请您使用自己的域名托管在此平台 查看此教程 https://www.kejiland.com/post/40e10f58.html
+有两种方法可以用这个脚本：
 
-![](https://images.2024921.xyz/images/202502081755392.png)
+### 方法一：手动下载脚本再运行 (如果你已经有 app.ps1 文件了)
 
-3. 官方提供**永久免费**、**125M**的磁盘空间和**5个国家**地区（官方地区数据混乱，哪吒显示只有三个地区），服务器位置随自己的爱好选择，跳转到支付页面，点击右边**Checkout**.（125M空间部署此项目足够）
+1.  **拿到脚本**: 如果你已经有 `app.ps1` 这个脚本文件了，把它存到你电脑上一个好找的地方。
+2.  **运行脚本**:
+    * 打开 PowerShell（在开始菜单搜一下 PowerShell 就能找到）。
+    * **重点来啦**: 先用 `cd` 命令切换到你希望保存 `app.ps1` 和之后生成的 `app.js`、`package.json` 文件的文件夹。比如，你可以 `cd Desktop` (桌面) 或者 `cd Downloads` (下载)，或者自己新建一个文件夹再进去。
+    * 然后运行脚本: `.\app.ps1`
+    * 如果 PowerShell 提示说不能运行脚本（执行策略问题），试试运行 `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` 或者 `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`。运行这些命令前最好了解一下它们是干嘛的。
+3.  **跟着提示走**: 脚本会像聊天一样问你问题，你照着回答就行。
 
-![](https://images.2024921.xyz/images/202502081755458.png)
+### 方法二：一行命令搞定 (Windows 专用快速通道)
 
-![](https://images.2024921.xyz/images/202502081756515.png)
+用下面这行命令，可以直接从 PowerShell 下载并运行脚本。**不过，在运行这行命令前，第一步还是不能少哦！**
 
-![](https://images.2024921.xyz/images/202502081756219.png)
+1.  **重要：先选个工作文件夹**
+    * 打开 PowerShell。
+    * 用 `cd` 命令切换到一个你打算放脚本和配置文件的文件夹。**这一步非常关键**，因为 `app.ps1` 脚本和后面生成的 `app.js`、`package.json` 都会保存在你运行命令时所在的这个文件夹里。
+    * 举个例子，你可以新建一个叫 `MyNodeProject` 的文件夹然后进去：
+        ```powershell
+        mkdir MyNodeProject
+        cd MyNodeProject
+        ```
+        或者，直接去你常用的“下载”文件夹：
+        ```powershell
+        cd Downloads
+        ```
 
-4. 回到首页即可看到服务器信息，点击**Go To Control Panel**跳转到后台管理页面，点击左栏**Files Management** ➡**File Management**➡domains➡xxx.freewebhostmost.com➡public_html.   将项目中的**app.js**和**package.json**上传到此目录下即可。
+2.  **运行这行神奇的命令**:
+    在你选好的文件夹里，复制粘贴下面这行命令，然后按回车：
+    ```powershell
+    powershell -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '[https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1](https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1)' -OutFile 'app.ps1'; & './app.ps1'"
+    ```
+    这行命令会帮你做这些事：
+    * `powershell -ExecutionPolicy Bypass -Command "..."`: 临时用一个比较宽松的权限来运行 PowerShell 命令。
+    * `Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1' -OutFile 'app.ps1'`: 从指定的网址下载 `app.ps1` 脚本，并把它存到你当前的文件夹里。
+    * `& './app.ps1'`: 运行刚下载好的 `app.ps1` 脚本。
 
-![](https://images.2024921.xyz/images/202502081756696.png)
+3.  **跟着提示走**: `app.ps1` 脚本启动后，就会开始问你问题啦。
 
-![](https://images.2024921.xyz/images/202502081757025.png)
+## 配置步骤详解
 
-5. 打开**app.js**修给几处参数数据即可，**UUID** **NEZHA_SERVER** **NEZHA_PORT** **NEZHA_KEY** **DOMAIN**  **PORT**
+脚本会带你一步步完成设置：
 
-哪吒数据三件套就不多说了，有哪吒的都会；如果你没有哪吒可不填。
+### 1. 准备好“原料”
 
-UUID 如有必要也可以替换新的；**DOMAIN**  填写分配的域名可保活，以防万一也可以放在哪吒服务中。
+脚本会自动去 GitHub 上帮你把最新的 `app.js` 和 `package.json` 这两个文件下载下来。
+* `app.js` 的下载地址: `https://raw.githubusercontent.com/qwer-search/Webhostmost-ws-nodejs/main/app.js`
+* `package.json` 的下载地址: `https://raw.githubusercontent.com/qwer-search/Webhostmost-ws-nodejs/main/package.json`
 
-**PORT**  **重点** **重点** **重点** 说三遍，不建议默认3000端口，端口一定会占用，端口可随便填写。
+它们会被保存在你运行脚本的那个文件夹里。
 
-![](https://images.2024921.xyz/images/202502081757775.png)
+### 2. 设置基本参数
 
-6. 点击左栏**Website Management**➡**NodeJs APP**➡**Create application**➡**CREATE**
+接下来，脚本会问你要几个基本信息：
 
-Node.js version➡**v22**
+* **你的域名 (Domain)**: 比如 `yourdomain.freewebhostmost.com`。这个域名会用在 VLESS 链接里，也会写进 `app.js`。
+* **UUID**: 你可以填一个你自己的 UUID，如果懒得想，直接按回车，脚本会帮你生成一个独一无二的。
+* **app.js 监听的端口号 (Port)**: 就是 `app.js` 里的 HTTP 服务器用哪个端口。不想填的话，按回车，脚本会在 10000 到 65535 之间随便给你选一个。
 
-Application root➡**domains/xxx.freewebhostmost.com/public_html**  (替换自己的完整域名)
+填完这些，脚本就会把 `app.js` 文件里的对应内容改好，然后告诉你配置好的信息，还有你的 VLESS 订阅链接（格式是 `https://你的域名/sub`）。
 
-Application startup file➡**app.js**
+### 3. (可选步骤) 配置 Nezha 监控
 
-![](https://images.2024921.xyz/images/202502081757659.png)
+基本设置搞定后，脚本会问你要不要顺便把 Nezha 监控也配上。
 
-![](https://images.2024921.xyz/images/202502121229848.png)
+* 如果你选 **是 (Y)**，它会继续问你：
+    * **NEZHA_SERVER**: 你的 Nezha 面板服务器地址 (比如 `nezha.yourdomain.com`)。
+    * **NEZHA_PORT**: Nezha 面板的端口号 (比如 `443` 或者 `5555`)。
+    * **NEZHA_KEY**: Nezha 面板的密钥 (如果你的面板不需要密钥，这里可以直接按回车跳过)。
+    然后脚本会把这些信息也更新到 `app.js` 文件里。
+* 如果你选 **否 (N)**，那就跳过这一步，没问题！
 
-7. 回到**Development Tools**➡**terminal**。刚才创建完成**Node.js**应用后会页面出现一行命令，将此命令复制到**terminal**中回车获取权限，之后再输入 **npm i**安装依赖。
+## 最后你会得到这些文件
 
-![](https://images.2024921.xyz/images/202502121427797.png)
+脚本跑完后，你运行脚本的那个文件夹里，会生成或者修改好下面这些文件：
 
-![](https://images.2024921.xyz/images/202502081758377.png)
+* `app.js`: 根据你的回答修改好的核心程序文件。
+* `package.json`: 项目的依赖说明文件，是从 GitHub 下载的。
+* `app.ps1` (如果你是用那行快速命令运行的，或者你手动保存的文件名就是 `app.ps1`): PowerShell 脚本它自己。
 
-8. 回到**Node.js应用**界面，点击**Run JS script**
+## 把文件传到 Webhostmost
 
-![](https://images.2024921.xyz/images/202502081759797.png)
+配置都弄好了，现在你需要把下面这两个文件传到你的 Webhostmost 主机上：
 
-![](https://images.2024921.xyz/images/202502081759188.png)
+* `app.js`
+* `package.json`
 
-9. 输入你的域名/sub即可获取节点。例如https://hezi.freewebhostmost.com/sub，如果你之前没有反代此域名请你用原域名，节点如下：
+**传到哪里呢？建议是这个路径**: `domains/你输入的域名/public_html/`
 
-`vless://b28f60af-d0b9-4ddf-baaa-7e49c93c380b@hezi.freewebhostmost.com:443?encryption=none&security=tls&sni=hezi.freewebhostmost.com&allowInsecure=1&type=ws&path=%2F#USA-webhostmost-GCP`
+把上面那两个文件传到这个文件夹里就行。
 
+## 温馨提示
 
-如果想workers反代请使用一下代码：二选一
+* **文件乱码怎么办?**: 如果你用文本编辑器打开修改后的 `app.js` 文件，发现里面是乱码，别慌！大概率是你的编辑器没用 UTF-8 编码打开它。试试在编辑器的设置里把它改成用 **UTF-8** 编码查看。脚本保存 `app.js` 的时候用的是 UTF-8 (无 BOM) 格式，一般没问题。
+* **出错了?**: 脚本里加了一些简单的错误检查。万一下载文件或者改文件的时候出了问题，脚本会告诉你，然后可能会停下来。
+* **`app.js` 的“小秘密”**: 脚本修改 `app.js` 的时候，是按照特定格式来找默认值的 (比如 `const UUID = process.env.UUID || '默认值';` 这种)。如果源头 `app.js` 文件的结构变动太大，脚本可能就找不到地方改了，那时候可能需要调整一下脚本里的查找规则。
 
-```js
-export default {
-    async fetch(request, env) {
-        let url = new URL(request.url);
-        if (url.pathname.startsWith('/')) {
-            var arrStr = [
-                'aaaa.bbbbb.hf.space',// 修改成自己的节点IP/域名
-            ];
-            url.protocol = 'https:'
-            url.hostname = getRandomArray(arrStr)
-            let new_request = new Request(url, request);
-            return fetch(new_request);
-        }
-        return env.ASSETS.fetch(request);
-    },
-};
-function getRandomArray(array) {
-  const randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-```
+---
 
-
-```js
-export default {
-  async fetch(request, env, ctx) {
-    let url = new URL(request.url);
-    if(url.pathname.startsWith('/')){
-      url.hostname="translate.google.com"; // 修改成自己的节点IP/域名
-      let new_request = new Request(url, request)
-      return await fetch(new_request)
-    }
-    return await env.ASSETS.fetch(request);
-  },
-};
-```
-
-10. 来到哪吒即可看到哪吒已经点亮。
-![](https://images.2024921.xyz/images/202502081804188.png)
-
-
-# 感谢作者
-
-- 感谢[eooce](https://github.com/eooce)提供代码支持❤
-
-# 免责声明
-
-- 本程序仅供学习了解, 非盈利目的，请于下载后 24 小时内删除, 不得用作任何商业用途, 文字、数据及图片均有所属版权, 如转载须注明来源。
-- 使用本程序必循遵守部署免责声明，使用本程序必循遵守部署服务器所在地、所在国家和用户所在国家的法律法规, 程序作者不对使用者任何不当行为负责。
