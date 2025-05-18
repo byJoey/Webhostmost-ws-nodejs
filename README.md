@@ -62,7 +62,7 @@
 2.  **运行这行神奇的命令**:
     在你选好的文件夹里，复制粘贴下面这行命令，然后按回车：
     ```powershell
-    powershell -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri '[https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1](https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1)' -OutFile 'app.ps1'; & './app.ps1'"
+     powershell -ExecutionPolicy Bypass -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.ps1' -OutFile 'app.ps1'; & './app.ps1'"
     ```
     这行命令会帮你做这些事：
     * `powershell -ExecutionPolicy Bypass -Command "..."`: 临时用一个比较宽松的权限来运行 PowerShell 命令。
