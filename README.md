@@ -5,13 +5,13 @@
 欢迎使用 `app.ps1` 这个 PowerShell 小脚本！如果你想在 Webhostmost 上部署 `Webhostmost-ws-nodejs` 项目，它能帮你一把，让配置过程更轻松。它会一步步引导你，自动帮你填好那些麻烦的配置文件。
 
 ## 感谢这些朋友
+* **核心功能主要来自 (Core Functionality By)**:
+    * [https://github.com/eooce](https://github.com/eooce)
+    * [https://github.com/qwer-search](https://github.com/qwer-search)
 
 * **这个配置脚本的作者 (Script Author)**: Joey
     * 博客 (Blog): joeyblog.net
     * 有啥想说的，来TG聊聊 (Feedback TG): [https://t.me/+ft-zI76oovgwNmRh](https://t.me/+ft-zI76oovgwNmRh)
-* **核心功能主要来自 (Core Functionality By)**:
-    * [https://github.com/eooce](https://github.com/eooce)
-    * [https://github.com/qwer-search](https://github.com/qwer-search)
 
 ## 这个脚本能做啥？
 
