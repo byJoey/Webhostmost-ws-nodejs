@@ -33,7 +33,7 @@ app_js_path="$current_path/$app_js_file_name"
 package_json_path="$current_path/$package_json_file_name"
 sed_error_log="/tmp/sed_error.log" # Temporary file for sed errors
 
-app_js_url="https://raw.githubusercontent.com/qwer-search/Webhostmost-ws-nodejs/main/app.js"
+app_js_url="https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.js"
 package_json_url="https://raw.githubusercontent.com/qwer-search/Webhostmost-ws-nodejs/main/package.json"
 
 # --- 函数定义 ---
