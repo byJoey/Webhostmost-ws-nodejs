@@ -6,7 +6,7 @@
 # Core Functionality By (核心功能实现):
 #   - https://github.com/eooce
 #   - https://github.com/qwer-search
-# Version: 2.4.5.sh (macOS - sed delimiter change & error handling)
+# Version: 2.4.8.sh (macOS - sed delimiter, panel URL opening with https default)
 
 # --- 颜色定义 ---
 COLOR_RED='\033[0;31m'
@@ -36,7 +36,33 @@ sed_error_log="/tmp/sed_error.log" # Temporary file for sed errors
 app_js_url="https://raw.githubusercontent.com/byJoey/Webhostmost-ws-nodejs/refs/heads/main/app.js"
 package_json_url="https://raw.githubusercontent.com/qwer-search/Webhostmost-ws-nodejs/main/package.json"
 
+SERVER_PANEL_URL_CONFIGURED=""
+
 # --- 函数定义 ---
+
+# 获取服务器面板URL函数
+prompt_server_panel_url() {
+    echo -e "\n${COLOR_YELLOW}--- 准备打开服务器 Node.js 管理面板 ---${COLOR_RESET}"
+    while true; do
+        read -p "请输入您的服务器面板的URL (例如: server7.webhostmost.com: " panel_url_input
+        if [[ -n "$panel_url_input" ]]; then
+            # 简单移除末尾的斜杠，以防用户输入
+            panel_url_input=$(echo "$panel_url_input" | sed 's#/*$##')
+
+            # 检查并添加协议头
+            if [[ ! "$panel_url_input" == *"://"* ]]; then
+                echo -e "${COLOR_YELLOW}检测到输入的URL缺少协议头 (例如 http:// 或 https://)，将默认使用 https:// ${COLOR_RESET}"
+                panel_url_input="https://$panel_url_input" # <--- 修改在此
+            fi
+
+            SERVER_PANEL_URL_CONFIGURED="$panel_url_input"
+            echo -e "${COLOR_CYAN}服务器面板基础URL已记录: $SERVER_PANEL_URL_CONFIGURED${COLOR_RESET}"
+            break
+        else
+            echo -e "${COLOR_YELLOW}服务器面板URL不能为空，请重新输入。${COLOR_RESET}"
+        fi
+    done
+}
 
 # 下载文件函数
 download_file() {
@@ -87,7 +113,7 @@ update_app_js_config() {
     if [ $sed_exit_status -ne 0 ]; then
         echo -e "${COLOR_RED}错误: sed 命令在修改 '$conf_name' 时失败，退出状态码: $sed_exit_status.${COLOR_RESET}"
         if [[ -s "$sed_error_log" ]]; then # Check if log file is not empty
-             echo -e "${COLOR_RED}Sed 错误信息: $(cat "$sed_error_log")${COLOR_RESET}"
+            echo -e "${COLOR_RED}Sed 错误信息: $(cat "$sed_error_log")${COLOR_RESET}"
         fi
         rm -f "$sed_error_log" # Clean up log file
         return 1 # Indicate failure
@@ -122,7 +148,15 @@ invoke_basic_configuration() {
 
     read -p "请输入 UUID（留空则自动生成）: " uuid_val
     if [[ -z "$uuid_val" ]]; then
-        uuid_val=$(uuidgen) 
+        if command -v uuidgen &>/dev/null; then
+            uuid_val=$(uuidgen)
+        elif command -v C:\Windows\System32\uuidgen.exe &>/dev/null; then # For Git Bash on Windows
+             uuid_val=$(C:\Windows\System32\uuidgen.exe)
+        elif command -v pwgen &>/dev/null; then # Fallback if uuidgen not available
+            uuid_val=$(pwgen -s 36 1)
+        else # Simple random string if no generator
+            uuid_val=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 36)
+        fi
         echo -e "${COLOR_CYAN}已自动生成 UUID: $uuid_val${COLOR_RESET}"
     fi
     UUID_CONFIGURED="$uuid_val"
@@ -219,6 +253,8 @@ basic_config_performed=false
 nezha_config_performed=false
 error_occurred=false
 
+prompt_server_panel_url # 获取服务器面板URL
+
 echo -e "\n${COLOR_YELLOW}准备配置文件...${COLOR_RESET}"
 if ! download_file "$app_js_url" "$app_js_path" "$app_js_file_name"; then
     error_occurred=true
@@ -250,8 +286,7 @@ if ! $error_occurred; then
                 echo -e "${COLOR_GREEN}Nezha 参数已配置到 $app_js_file_name。${COLOR_RESET}"
                 echo -e "${COLOR_GREEN}--------------------------------------------------------${COLOR_RESET}"
             else
-                 echo -e "${COLOR_RED}Nezha 配置过程中发生错误。${COLOR_RESET}"
-                 # No need to set error_occurred=true here if basic config was okay and user wants to proceed
+                echo -e "${COLOR_RED}Nezha 配置过程中发生错误。${COLOR_RESET}"
             fi
         else
             echo -e "${COLOR_YELLOW}跳过 Nezha 监控参数配置。${COLOR_RESET}"
@@ -281,7 +316,7 @@ if $basic_config_performed || $nezha_config_performed; then
     if $basic_config_performed; then
         echo -e "${COLOR_GREEN}已配置基本参数。${COLOR_RESET}"
         if [[ -n "$SUB_PATH_CONFIGURED" ]]; then
-             echo -e "${COLOR_GREEN}自定义/自动生成的订阅路径为: $SUB_PATH_CONFIGURED${COLOR_RESET}"
+            echo -e "${COLOR_GREEN}自定义/自动生成的订阅路径为: $SUB_PATH_CONFIGURED${COLOR_RESET}"
         fi
     fi
     if $nezha_config_performed; then
@@ -298,4 +333,56 @@ else
 fi
 
 echo -e "${COLOR_GREEN}==================== 脚本操作结束 ====================${COLOR_RESET}"
-ß
+
+if [[ -n "$SERVER_PANEL_URL_CONFIGURED" ]]; then
+    final_panel_url="${SERVER_PANEL_URL_CONFIGURED}:2222/evo/user/plugins/nodejs_selector#/"
+    echo -e "\n${COLOR_YELLOW}准备打开服务器 Node.js 管理页面...${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}URL: $final_panel_url${COLOR_RESET}"
+    
+    opened_successfully=false
+    if command -v xdg-open &> /dev/null; then
+        echo "正在使用 xdg-open (Linux) 打开..."
+        if xdg-open "$final_panel_url"; then # xdg-open returns 0 on success (usually)
+             opened_successfully=true
+        else
+             echo -e "${COLOR_RED}xdg-open 命令执行失败 (退出码: $?)。${COLOR_RESET}"
+        fi
+    elif command -v open &> /dev/null; then # macOS
+        echo "正在使用 open (macOS) 打开..."
+        if open "$final_panel_url"; then
+            echo -e "${COLOR_GREEN}已执行 'open' 命令。请检查浏览器是否已打开页面。${COLOR_RESET}"
+            opened_successfully=true 
+        else
+            ret_code=$?
+            echo -e "${COLOR_RED}macOS 'open' 命令执行失败，退出码: $ret_code.${COLOR_RESET}"
+            echo -e "${COLOR_RED}这可能表示URL格式有问题或找不到默认浏览器来处理。${COLOR_RESET}"
+        fi
+    elif command -v explorer.exe &> /dev/null; then # Windows (WSL/Git Bash)
+        echo "正在使用 explorer.exe (Windows) 打开..."
+        # explorer.exe does not return useful status codes easily for URL opening. Assume success if command runs.
+        explorer.exe "$final_panel_url"
+        opened_successfully=true # Assuming it's launched if command exists
+        # Add a small delay for explorer.exe to potentially launch
+        sleep 1
+        echo -e "${COLOR_GREEN}已尝试使用 explorer.exe 打开。请检查浏览器。${COLOR_RESET}"
+    elif command -v termux-open-url &> /dev/null; then # Termux on Android
+        echo "正在使用 termux-open-url (Termux) 打开..."
+        if termux-open-url "$final_panel_url"; then
+            opened_successfully=true
+        else
+            echo -e "${COLOR_RED}termux-open-url 命令执行失败。${COLOR_RESET}"
+        fi
+    fi
+
+    if $opened_successfully; then
+        echo -e "${COLOR_GREEN}已尝试在浏览器中打开。如果页面未自动打开，请手动复制上面的链接访问。${COLOR_RESET}"
+    else
+        echo -e "${COLOR_RED}未能找到合适的命令或自动打开浏览器失败。${COLOR_RESET}"
+        echo -e "${COLOR_YELLOW}请手动复制以下链接到浏览器访问:${COLOR_RESET}"
+        echo -e "${COLOR_CYAN}$final_panel_url${COLOR_RESET}"
+    fi
+else
+    echo -e "\n${COLOR_YELLOW}未输入服务器面板URL，跳过自动打开面板操作。${COLOR_RESET}"
+fi
+echo -e "${COLOR_MAGENTA}--------------------------------------------------------------------------${COLOR_RESET}"
+echo -e "${COLOR_MAGENTA}脚本执行完毕。感谢使用！${COLOR_RESET}"
